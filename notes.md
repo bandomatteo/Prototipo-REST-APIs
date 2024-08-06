@@ -12,9 +12,9 @@ Una classe **entity** rappresenta una tabella in un database relazionale.
 @Entity  
 @Table(name = "authors")  
 public class Author { 
- 
-	@Id  
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
+    
+    @Id 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
     private Long id;  
     
     private String name;  
@@ -43,12 +43,12 @@ public class Author {
 @Builder  
 @Entity  
 @Table(name = "books")  
-public class Book {  
-  
-	@Id  
-	private String isbn;  
-  
-	private String title;  
+public class Book { 
+    
+    @Id 
+    private String isbn;
+    
+    private String title;  
   
     @ManyToOne(cascade = CascadeType.ALL)  
     @JoinColumn(name = "author_id")
