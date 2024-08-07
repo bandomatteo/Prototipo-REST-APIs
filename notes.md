@@ -759,3 +759,41 @@ Se `findById(id)` non trova l'autore, `orElseThrow` lancia una `RuntimeException
 
 -   **Lambda**: Una funzione lambda è una funzione anonima che può essere usata come parametro. Esempio: `x -> x * x` è una lambda che prende un parametro `x` e restituisce `x` al quadrato.
 -   **Method Reference (`::`)**: È una scorciatoia per riferirsi a metodi esistenti. `existingAuthor::setName` è una forma abbreviata per `name -> existingAuthor.setName(name)`.
+
+# Nested Object Conversion
+Per "nestare" le cose modifichiamo **MapperConfig** :
+``` JAVA
+@Configuration  
+public class MapperConfig {  
+    @Bean  
+  public ModelMapper modelMapper() {  
+        ModelMapper modelMapper = new ModelMapper();  
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);  
+  
+        return modelMapper;  
+    }  
+}
+``` 
+
+### Configurazione della Strategia `LOOSE`
+
+Quando imposti la strategia di corrispondenza su `LOOSE`, stai dicendo al `ModelMapper` di essere più permissivo nella ricerca di corrispondenze tra i campi degli oggetti di origine e di destinazione.
+
+`modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);` 
+
+Questo permette al `ModelMapper` di gestire conversioni tra Entity e DTO anche se i campi non corrispondono esattamente per nome o struttura. Per esempio:
+
+### Come Funziona
+
+Con la strategia `LOOSE`, il `ModelMapper` è in grado di capire che:
+
+-   `emailAddress` in `UserEntity` corrisponde a `email` in `UserDTO`.
+
+Anche se i nomi dei campi non corrispondono esattamente, il `ModelMapper` utilizza convenzioni e somiglianze nei nomi per trovare le corrispondenze.
+
+### Perché Funziona la Conversione tra Entity e DTO
+
+1.  **Riconoscimento delle Convenzioni di Denominazione**: La strategia `LOOSE` permette al `ModelMapper` di riconoscere che `emailAddress` in `UserEntity` e `email` in `UserDTO` rappresentano lo stesso concetto, anche se i nomi non sono identici.
+2.  **Flessibilità nei Nomi dei Campi**: `ModelMapper` può mappare campi con nomi che hanno suffissi o prefissi diversi, basandosi su convenzioni comuni.
+3.  **Riduzione della Necessità di Configurazione Manuale**: Con la strategia `LOOSE`, si riduce il bisogno di configurare manualmente ogni singola mappatura tra campi, rendendo il codice più pulito e meno soggetto a errori.
+
