@@ -8,21 +8,21 @@ Una classe **entity** rappresenta una tabella in un database relazionale.
 ![Relazione tra le due tabelle](https://i.ibb.co/R0mn2qW/Screenshot-2024-08-06-213024.png)
 ## Esempio (Author.java) - ID generativo
 ```JAVA
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "authors")
-public class Author {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
-    private Long id;
-
-    private String name;
-
-    private Integer age;
+@Data  
+@AllArgsConstructor  
+@NoArgsConstructor  
+@Builder  
+@Entity  
+@Table(name = "authors")  
+public class Author { 
+ 
+	@Id  
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
+    private Long id;  
+    
+    private String name;  
+    
+    private Integer age;  
 }
 ```
 -   **`@Data`**: Una scorciatoia per @ToString, @EqualsAndHashCode, @Getter su tutti i campi, @Setter su tutti i campi non finali e @RequiredArgsConstructor
@@ -40,23 +40,23 @@ public class Author {
 
 # Esempio (Book) - Id nostro
 ```JAVA
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "books")
-public class Book {
-
-    @Id
-    private String isbn;
-
-    private String title;
-
-    @ManyToOne(cascade = CascadeType.ALL)
+@Data  
+@AllArgsConstructor  
+@NoArgsConstructor  
+@Builder  
+@Entity  
+@Table(name = "books")  
+public class Book {  
+  
+	@Id  
+	private String isbn;  
+  
+	private String title;  
+  
+    @ManyToOne(cascade = CascadeType.ALL)  
     @JoinColumn(name = "author_id")
-    private Author author;
-
+    private Author author;  
+  
 }
 ```
 - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
@@ -91,31 +91,31 @@ dove
 
 Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro)
 ```JAVA
-public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> {
-
-    <S extends T> S save(S entity);
-
-    <S extends T> java.lang.Iterable<S> saveAll(java.lang.Iterable<S> entities);
-
-    java.util.Optional<T> findById(ID id);
-
-    boolean existsById(ID id);
-
-    java.lang.Iterable<T> findAll();
-
-    java.lang.Iterable<T> findAllById(java.lang.Iterable<ID> ids);
-
-    long count();
-
-    void deleteById(ID id);
-
-    void delete(T entity);
-
-    void deleteAllById(java.lang.Iterable<? extends ID> ids);
-
-    void deleteAll(java.lang.Iterable<? extends T> entities);
-
-    void deleteAll();
+public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> { 
+ 
+    <S extends T> S save(S entity);  
+  
+    <S extends T> java.lang.Iterable<S> saveAll(java.lang.Iterable<S> entities);  
+  
+    java.util.Optional<T> findById(ID id);  
+  
+    boolean existsById(ID id);  
+  
+    java.lang.Iterable<T> findAll();  
+  
+    java.lang.Iterable<T> findAllById(java.lang.Iterable<ID> ids);  
+  
+    long count();  
+  
+    void deleteById(ID id);  
+  
+    void delete(T entity);  
+  
+    void deleteAllById(java.lang.Iterable<? extends ID> ids);  
+  
+    void deleteAll(java.lang.Iterable<? extends T> entities);  
+  
+    void deleteAll();  
 }
 ```
 ` <S extends T> S save(S entity);`è utilizzato sia per creare e fare l'update dei dati del DB
@@ -294,9 +294,9 @@ public class MapperConfig {
 - **Annotazione di Classe:** *@Configuration*.
 - **Gestione del Ciclo di Vita:** Le classi annotate con *@Configuration* sono proxyizzate da Spring per garantire che i bean definiti con @Bean siano singleton.
 - **Uso Tipico:**
-    - Configurazione di componenti complessi come DataSource, Security, ecc.
-    - Centralizzazione della configurazione dei bean.
-    - Personalizzazione di bean con configurazioni specifiche.
+  - Configurazione di componenti complessi come DataSource, Security, ecc.
+  - Centralizzazione della configurazione dei bean.
+  - Personalizzazione di bean con configurazioni specifiche.
 
 **Esempio:**
 ```JAVA
@@ -318,9 +318,9 @@ public class MapperConfig {
 - **Annotazione di Classe:** @Component.
 - **Gestione del Ciclo di Vita:** Le classi annotate con *@Component* non sono proxyizzate come quelle con *@Configuration*, quindi ogni chiamata a un metodo *@Bean* potrebbe creare una nuova istanza del bean, a meno che non sia gestito diversamente.
 - Uso Tipico:
-    - Registrazione di servizi generici, helper o utility.
-    - Registrazione di componenti come schedulatori, listener di eventi, ecc.
-    - Annotazioni specializzate come @Service, @Repository, @Controller che estendono @Component.
+  - Registrazione di servizi generici, helper o utility.
+  - Registrazione di componenti come schedulatori, listener di eventi, ecc.
+  - Annotazioni specializzate come @Service, @Repository, @Controller che estendono @Component.
 
 Esempio:
 ```JAVA
@@ -432,3 +432,50 @@ public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
 ``` 
 **tipo di ritorno:** `AuthorDto `--->` ResponseEntity<AuthorDto>`: ci permette di cambiare lo status code della response
 **return**: `return authorMapper.mapto(savedAuthorEntity);` --->`return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);`
+
+## Book DTO
+Anche questo sarà un POJO e risulterà così:
+``` JAVA
+@Data  
+@AllArgsConstructor  
+@NoArgsConstructor  
+@Builder  
+public class BookDto {  
+  
+    private String isbn;  
+  
+    private String title;  
+  
+    private AuthorDto authorEntity;  //adesso lavoriamo con i DTO e non con le entity
+}
+``` 
+## Book Controller
+Siccome l' ISBN sarà nel path usiamo **@PathVariable** per indicare che sarà nel path
+``` JAVA
+@RestController  
+public class BookController {  
+  
+    @PutMapping("/books/{isbn}")  
+public ResponseEntity<BookDto> createBook(  @PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto) {//implementazone  }
+}
+``` 
+##BookService
+``` JAVA
+@Service  
+public class BookServiceImpl implements BookService {  
+  
+    private BookRepository bookRepository;  
+  
+    public BookServiceImpl(BookRepository bookRepository) {  
+        this.bookRepository = bookRepository;  
+    }  
+  
+    @Override  
+  public BookEntity createBook(String isbn, BookEntity bookToCreate) {  
+        //per assicurarci che l'ISBN passato nell'oggetto sia uguale a quello passato nell'URL  
+        bookToCreate.setIsbn(isbn);  
+        return bookRepository.save(bookToCreate);  
+    }  
+}
+``` 
+
