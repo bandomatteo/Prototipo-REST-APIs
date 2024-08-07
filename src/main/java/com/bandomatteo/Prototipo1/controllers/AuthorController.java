@@ -6,12 +6,10 @@ import com.bandomatteo.Prototipo1.mappers.Mapper;
 import com.bandomatteo.Prototipo1.services.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,6 +41,19 @@ public class AuthorController {
         return authors.stream()
                 .map(authorMapper::mapto)
                 .collect(Collectors.toList());
+
+
+    }
+
+    @GetMapping(path = "/authors/{id}")
+    public ResponseEntity<AuthorDto> getAuthorById(@PathVariable("id") Long id) {
+
+        Optional<AuthorEntity> foundAuthor = authorService.findOne(id);
+
+        return foundAuthor.map(authorEntity-> {
+            AuthorDto authorDto = authorMapper.mapto( authorEntity );
+            return new ResponseEntity<>(authorDto, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
 
     }
