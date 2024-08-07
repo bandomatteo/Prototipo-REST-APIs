@@ -57,6 +57,10 @@ public class AuthorServiceImpl implements AuthorService {
         }).orElseThrow(()-> new RuntimeException("Author does not exits with id: " + id));
     }
 
+    @Override
+    public void delete(Long id) {
+        authorRepository.deleteById(id);
+    }
 
 
 //    // Set the ID of the author entity to the provided ID
