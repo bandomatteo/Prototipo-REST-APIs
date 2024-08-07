@@ -714,5 +714,48 @@ public interface BookService {
 ``` 
 
 
+## PartialUpdate (AuthorService)
+``` JAVA
+@Override  
+  public AuthorEntity partialUpdate(Long id, AuthorEntity authorEntity) {  
+  
+        authorEntity.setId(id); //this time we set the ID in the Service  
+  
+  return authorRepository.findById(id).map(existingAuthor -> {  
+            Optional.ofNullable(authorEntity.getName()).ifPresent(existingAuthor::setName);  
+            Optional.ofNullable(authorEntity.getAge()).ifPresent(existingAuthor::setAge);  
+            return authorRepository.save(existingAuthor);  
+        }).orElseThrow(()-> new RuntimeException("Author does not exits with id: " + id));  
+    }  
+}
+```
+Questa funzione aggiorna parzialmente un'entità `AuthorEntity` nel database, identificata da un ID specifico. 
 
+ `return authorRepository.findById(id).map(existingAuthor -> {` 
 
+Qui, la funzione chiama `findById(id)` sul repository (`authorRepository`) per cercare l'autore esistente con l'ID fornito. Se l'autore esiste, il risultato è avvolto in un `Optional`, e la funzione `map` viene applicata.
+
+La funzione lambda all'interno di `map` è definita come segue:
+
+ `Optional.ofNullable(authorEntity.getName()).ifPresent(existingAuthor::setName);` 
+
+Questo codice prende il nome dall'entità `authorEntity`. Se il nome non è `null`, allora `ifPresent` esegue il metodo `setName` sull'autore esistente (`existingAuthor`).
+
+ `Optional.ofNullable(authorEntity.getAge()).ifPresent(existingAuthor::setAge);` 
+
+Analogamente, questo codice prende l'età dall'entità `authorEntity`. Se l'età non è `null`, allora `ifPresent` esegue il metodo `setAge` sull'autore esistente (`existingAuthor`).
+
+Il metodo `::` è una forma abbreviata per chiamare un metodo. In questo caso, `existingAuthor::setName` è equivalente a `name -> existingAuthor.setName(name)`.
+
+ `return authorRepository.save(existingAuthor);` 
+
+Qui, l'autore aggiornato viene salvato nel repository.
+
+ `}).orElseThrow(()-> new RuntimeException("Author does not exist with id: " + id));` 
+
+Se `findById(id)` non trova l'autore, `orElseThrow` lancia una `RuntimeException` con un messaggio che specifica che l'autore con l'ID dato non esiste.
+
+### Dettaglio su Lambda e `::`
+
+-   **Lambda**: Una funzione lambda è una funzione anonima che può essere usata come parametro. Esempio: `x -> x * x` è una lambda che prende un parametro `x` e restituisce `x` al quadrato.
+-   **Method Reference (`::`)**: È una scorciatoia per riferirsi a metodi esistenti. `existingAuthor::setName` è una forma abbreviata per `name -> existingAuthor.setName(name)`.
