@@ -3,6 +3,7 @@ package com.bandomatteo.Prototipo1.controllers;
 import com.bandomatteo.Prototipo1.domain.dto.BookDto;
 import com.bandomatteo.Prototipo1.domain.entities.BookEntity;
 import com.bandomatteo.Prototipo1.mappers.Mapper;
+import com.bandomatteo.Prototipo1.repositories.BookRepository;
 import com.bandomatteo.Prototipo1.services.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,14 @@ import java.util.stream.Collectors;
 @RestController
 public class BookController {
 
+    private final BookRepository bookRepository;
     private Mapper<BookEntity, BookDto> bookMapper;
     private BookService bookService;
 
-    public BookController(Mapper<BookEntity, BookDto> bookMapper, BookService bookService) {
+    public BookController(Mapper<BookEntity, BookDto> bookMapper, BookService bookService, BookRepository bookRepository) {
         this.bookMapper = bookMapper;
         this.bookService = bookService;
+        this.bookRepository = bookRepository;
     }
 
     @PutMapping("/books/{isbn}")
@@ -73,5 +76,13 @@ public class BookController {
 
         return new ResponseEntity<>(bookMapper.mapto(updatedBookEntity), HttpStatus.OK);
 
+    }
+
+    @DeleteMapping(path = "/books/{isbn}")
+    public ResponseEntity deleteBook(@PathVariable ("isbn") String isbn){
+
+        bookService.delete(isbn);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }
