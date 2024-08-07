@@ -1,5 +1,5 @@
 # Pesistance Layer
-Entity + Repository 
+Entity + Repository
 ![enter image description here](https://i.ibb.co/y0LJnsM/Screenshot-2024-08-07-004402.png)
 # Entity
 ## Cos'è
@@ -8,21 +8,21 @@ Una classe **entity** rappresenta una tabella in un database relazionale.
 ![Relazione tra le due tabelle](https://i.ibb.co/R0mn2qW/Screenshot-2024-08-06-213024.png)
 ## Esempio (Author.java) - ID generativo
 ```JAVA
-@Data  
-@AllArgsConstructor  
-@NoArgsConstructor  
-@Builder  
-@Entity  
-@Table(name = "authors")  
-public class Author { 
- 
-	@Id  
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
-    private Long id;  
-    
-    private String name;  
-    
-    private Integer age;  
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "authors")
+public class Author {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
+    private Long id;
+
+    private String name;
+
+    private Integer age;
 }
 ```
 -   **`@Data`**: Una scorciatoia per @ToString, @EqualsAndHashCode, @Getter su tutti i campi, @Setter su tutti i campi non finali e @RequiredArgsConstructor
@@ -31,40 +31,40 @@ public class Author {
 
 > [Utile](https://stackoverflow.com/questions/68314072/why-to-use-allargsconstructor-and-noargsconstructor-together-over-an-entity) per `@AllArgsConstructor`  e per `@NoArgsConstructor`
 
- - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
- - **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
- - **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
- - **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
- - **`@GeneratedValue`**: `(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")`: Per dire che sarà un ID incrementale
+- **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
+- **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
+- **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
+- **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
+- **`@GeneratedValue`**: `(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")`: Per dire che sarà un ID incrementale
 
 
 # Esempio (Book) - Id nostro
 ```JAVA
-@Data  
-@AllArgsConstructor  
-@NoArgsConstructor  
-@Builder  
-@Entity  
-@Table(name = "books")  
-public class Book {  
-  
-	@Id  
-	private String isbn;  
-  
-	private String title;  
-  
-    @ManyToOne(cascade = CascadeType.ALL)  
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "books")
+public class Book {
+
+    @Id
+    private String isbn;
+
+    private String title;
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id")
-    private Author author;  
-  
+    private Author author;
+
 }
 ```
- - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
- - **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
- - **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
- - **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
- - **`@ManyToOne(cascade = CascadeType.ALL)`**:Specifica la relazione con l' altra tabella. `cascade = CascadeType.ALL` indica che quando ritorniamo un libro, ritorniamo anche l' autore e se dovessimo modificare anche l'autore del libro, i dati verrebbero salvati anche nel DB. Qualora salvassimo un nuovo libro e passassimo un autore, verrebbe anche creato l'autore nel DB
- - **`@JoinColumn(name = "author_id")`** Per dire a quale campo della tabella del DB ci si riferisce
+- **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
+- **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
+- **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
+- **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
+- **`@ManyToOne(cascade = CascadeType.ALL)`**:Specifica la relazione con l' altra tabella. `cascade = CascadeType.ALL` indica che quando ritorniamo un libro, ritorniamo anche l' autore e se dovessimo modificare anche l'autore del libro, i dati verrebbero salvati anche nel DB. Qualora salvassimo un nuovo libro e passassimo un autore, verrebbe anche creato l'autore nel DB
+- **`@JoinColumn(name = "author_id")`** Per dire a quale campo della tabella del DB ci si riferisce
 
 
 # Hibernate Auto DDL
@@ -77,53 +77,53 @@ Setta il DB schema in modo automatico, basta aggiungere `spring.jpa.hibernate.dd
 # Repository (una per ogni entità)
 
 La "respository" (AuthorRepository/Book Repository)  è l’astrazione che usiamo per salvare e ottenere cose dal DB (evitando di scrivere SQL)
-Una cosa che fa Spring è creare l’implementazione delle repository per noi, quindi noi andremo **solo** a creare l’interfaccia; tutto questo è possibile andando ad estendere con la corretta Repository, per esempio: 
+Una cosa che fa Spring è creare l’implementazione delle repository per noi, quindi noi andremo **solo** a creare l’interfaccia; tutto questo è possibile andando ad estendere con la corretta Repository, per esempio:
 ```JAVA 
 @Repository
 public interface AuthorRepository extends CrudRepository<Author, Long> { }
 ```
 dove
 
- - `Author` è il l'entity con cui andiamo ad interagire
- - `Long` è il tipo dell' ID dell' entity
+- `Author` è il l'entity con cui andiamo ad interagire
+- `Long` è il tipo dell' ID dell' entity
 
 > **`@Repository`** : funziona come @Bean, ma è per le repository
 
-Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro) 
+Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro)
 ```JAVA
-public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> { 
- 
-    <S extends T> S save(S entity);  
-  
-    <S extends T> java.lang.Iterable<S> saveAll(java.lang.Iterable<S> entities);  
-  
-    java.util.Optional<T> findById(ID id);  
-  
-    boolean existsById(ID id);  
-  
-    java.lang.Iterable<T> findAll();  
-  
-    java.lang.Iterable<T> findAllById(java.lang.Iterable<ID> ids);  
-  
-    long count();  
-  
-    void deleteById(ID id);  
-  
-    void delete(T entity);  
-  
-    void deleteAllById(java.lang.Iterable<? extends ID> ids);  
-  
-    void deleteAll(java.lang.Iterable<? extends T> entities);  
-  
-    void deleteAll();  
+public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> {
+
+    <S extends T> S save(S entity);
+
+    <S extends T> java.lang.Iterable<S> saveAll(java.lang.Iterable<S> entities);
+
+    java.util.Optional<T> findById(ID id);
+
+    boolean existsById(ID id);
+
+    java.lang.Iterable<T> findAll();
+
+    java.lang.Iterable<T> findAllById(java.lang.Iterable<ID> ids);
+
+    long count();
+
+    void deleteById(ID id);
+
+    void delete(T entity);
+
+    void deleteAllById(java.lang.Iterable<? extends ID> ids);
+
+    void deleteAll(java.lang.Iterable<? extends T> entities);
+
+    void deleteAll();
 }
 ```
 ` <S extends T> S save(S entity);`è utilizzato sia per creare e fare l'update dei dati del DB
 
 ## Fare query piu' complicate (no CRUD)
 
- 1. Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
- 2. Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
+1. Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
+2. Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
 
 # Jackson
 Jackson è una popolare libreria per la serializzazione/deserializzazione di oggetti Java in vari formati di testo. La classe  ObjectMapper è il modo principale della libreria per lavorare con il formato JSON.
@@ -186,13 +186,13 @@ public class AuthorController {
     }  
 }
 ```
-`@PostMapping(path = "/authors"` ci indica che è un POST endpoint 
+`@PostMapping(path = "/authors")` ci indica che è un HTTP POST endpoint
 
-Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` che ci assicura che 
+Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` che ci assicura che
 
- 1. verrà letto il body (che contiene il JSON 
- 2. verrà convertito in un Java Object
- 
+1. verrà letto il body (che contiene il JSON)
+2. verrà convertito in un Java Object
+
 >  **@RequestBody** dice a Spring di cercare nell' HTTP Request Body un Author Object rappresentato come JSON e lo converte in Java Object
 
 # Service Layer
@@ -225,7 +225,7 @@ public class AuthorController {
     }  
 }
 ```
-Facendo così però è ancora lontano dalla perfezione, perchè stiamo usando nel **Presentation Layer** l' **Author Object**, la quale è una **Entity** che dovrebbe esistere nel **Persistance Layer** e al massimo nel **Service Layer** e non vogliamo in nessun modo che il Presentation Layer sappia come funziona il **Persistance Layer**.
+Facendo così però è ancora lontano dalla perfezione, perchè stiamo usando nel **Presentation Layer** l' **Author Object**, il quale è una **Entity** che dovrebbe esistere nel **Persistance Layer** e al massimo nel **Service Layer** e non vogliamo in nessun modo che il Presentation Layer sappia come funziona il **Persistance Layer**.
 
 Per ovviare a questo problema useremo i **DTO**, così che il **Service Layer** continui a ritornare una **Entity**, ma il **Presentation Layer** lo mapperà in un **DTO** e sarà proprio un **DTO** ciò che manderà e si aspetterà in cose come il **request body**
 
@@ -246,7 +246,7 @@ public class AuthorDto {
 }
 ```
 
-Dopo aver fatto il DTO quindi, andiamo a modificare il controller:
+Dopo aver fatto il DTO quindi, andiamo a modificare il controller del Presentation Layer
 ```JAVA
 @RestController  
 public class AuthorController {  
@@ -268,18 +268,95 @@ Adesso però abbiamo ancora un problema.
 ``` java
     return authorService.createAuthor(author); 
 ```
-vuole ancora un **author** un tipo author. 
+vuole ancora un **author** un tipo author.
 
 Per convertire una Entity in un DTO e viceversa useremo la libreria [ModelMapper](https://modelmapper.org/) --> [youtube](https://www.youtube.com/watch?v=Nv2DERaMx-4&t=14799s)
 
-.
-.
-.
-.
-
-otteniamo l'implementazione di AuthorMapper:
+# Model Mapper
+Siccome **ModelMapper** è un oggetto, un buon metodo per utilizzarla è quello di creare un nuovo **package** chiamato "**config**" e dentro andremo a creare una classe chiamata **MapperConfig**:
+![enter image description here](https://i.ibb.co/RjxmG9V/image.png)
+che sarà tipo:
 ```JAVA
-@Component //aggiunto così possiamo fare l'inject
+@Configuration  
+public class MapperConfig {  
+    @Bean  
+  public ModelMapper modelMapper() {  
+        return new ModelMapper();  
+    }  
+}
+
+```
+---
+## @Configuration vs @Component ( approfondimento)
+
+**@Configuration**
+- **Scopo:** Utilizzata per definire classi che configurano e forniscono bean al contesto Spring.
+- **Annotazione di Classe:** *@Configuration*.
+- **Gestione del Ciclo di Vita:** Le classi annotate con *@Configuration* sono proxyizzate da Spring per garantire che i bean definiti con @Bean siano singleton.
+- **Uso Tipico:**
+    - Configurazione di componenti complessi come DataSource, Security, ecc.
+    - Centralizzazione della configurazione dei bean.
+    - Personalizzazione di bean con configurazioni specifiche.
+
+**Esempio:**
+```JAVA
+@Configuration
+public class MapperConfig {
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        // Configurazioni personalizzate
+        modelMapper.getConfiguration().setFieldMatchingEnabled(true);
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        return modelMapper;
+    }
+}
+```
+
+**@Component**
+- **Scopo:** Utilizzata per registrare una classe come bean nel contesto Spring.
+- **Annotazione di Classe:** @Component.
+- **Gestione del Ciclo di Vita:** Le classi annotate con *@Component* non sono proxyizzate come quelle con *@Configuration*, quindi ogni chiamata a un metodo *@Bean* potrebbe creare una nuova istanza del bean, a meno che non sia gestito diversamente.
+- Uso Tipico:
+    - Registrazione di servizi generici, helper o utility.
+    - Registrazione di componenti come schedulatori, listener di eventi, ecc.
+    - Annotazioni specializzate come @Service, @Repository, @Controller che estendono @Component.
+
+Esempio:
+```JAVA
+@Component
+public class EmailService {
+    public void sendEmail(String to, String subject, String body) {
+        // Logica per inviare un'email
+        System.out.println("Sending email to: " + to);
+        System.out.println("Subject: " + subject);
+        System.out.println("Body: " + body);
+        // Codice reale per inviare l'email
+    }
+}
+```
+
+Conclusione
+- @Configuration è ideale per classi che definiscono bean e configurazioni complesse, garantendo gestione e personalizzazione centralizzate.
+- @Component è adatto per registrare classi come bean generici nel contesto Spring, spesso utilizzato per servizi, utility e componenti operativi.
+-----
+
+## Interfaccia Mapper
+Ora andiamo a creare una nuova folder chiamata "mappers" e per tenere le cose pulite e per permetterci di swappare tra future librerie di mapping piu' avanti, andiamo a creare una interfaccia chiamata Mapper che andrà a contenere tutta la logica per mappare:
+``` JAVA
+public interface Mapper <A,B> {  
+  
+    B mapto(A a);  
+  
+    A mapfrom(B b);  
+}
+```
+Possiamo implementare questa interfaccia con i **beans** e possiamo fare l'inject di questi beans quando ci servono.
+### Implementazione AuthorMapper
+Usiamo  `@Component` così da renderlo injectable
+
+``` JAVA
+@Component  
 public class AuthorMapperImpl implements Mapper<AuthorEntity, AuthorDto> {  
   
     private ModelMapper modelMapper;  
@@ -298,7 +375,12 @@ public class AuthorMapperImpl implements Mapper<AuthorEntity, AuthorDto> {
         return modelMapper.map(authorDto, AuthorEntity.class);  
     }  
 }
-```
+``` 
+
+
+----
+
+
 
 andiamo ad implementare il Servizio (AuthorServiceImpl)
 ``` JAVA
@@ -317,3 +399,36 @@ public class AuthorServiceImpl implements AuthorService {
     }  
 }
 ```
+Di default `authorRepository.save(authorEntity);` JPA ritorna una Entity, quindi ritorniamo una Entity
+
+# Integration test endpoint
+[Youtube](https://youtu.be/Nv2DERaMx-4?si=A9SX5spshuEhc7G9&t=15335)
+
+## Sistemiamo il controller
+Siccome il controller ritorna un HTTP STATUS 200 e noi vogliamo HTTP STATUS 201, andremo ad apportare le sia sul **tipo di ritorno** che sul **return**
+``` JAVA
+// DA
+
+    @PostMapping(path = "/authors")
+    public AuthorDto createAuthor(@RequestBody AuthorDto author) {
+
+        AuthorEntity authorEntity = authorMapper.mapfrom(author);
+        AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
+
+        return authorMapper.mapto(savedAuthorEntity);
+    }
+}
+
+
+//  A
+ @PostMapping(path = "/authors")  
+public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {  
+  
+    AuthorEntity authorEntity = authorMapper.mapfrom(author);  
+    AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);  
+  
+    return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);  
+}
+``` 
+**tipo di ritorno:** `AuthorDto `--->` ResponseEntity<AuthorDto>`: ci permette di cambiare lo status code della response
+**return**: `return authorMapper.mapto(savedAuthorEntity);` --->`return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);`
