@@ -20,14 +20,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookEntity createBook(String isbn, BookEntity bookToCreate) {
-
+    public BookEntity createUpdateBook(String isbn, BookEntity bookToCreate) {
+        //So we can be sure that the ISBN of the book we want to create will be exactly the same as the ISBN we are passing
         bookToCreate.setIsbn(isbn);
+
         return bookRepository.save(bookToCreate);
     }
 
     @Override
     public List<BookEntity> findAll() {
+
         return StreamSupport.
                 stream(bookRepository
                         .findAll()
@@ -38,6 +40,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Optional<BookEntity> findOne(String isbn) {
+
         return bookRepository.findById(isbn);
+    }
+
+    @Override
+    public boolean existsByIsbn(String isbn) {
+
+        return bookRepository.existsById(isbn);
     }
 }

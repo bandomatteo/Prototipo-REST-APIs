@@ -625,7 +625,7 @@ return foundAuthor.map(authorEntity -> {
 2.  **Lambda** è la funzione che definisce cosa fare con quel valore.
 3.  **`orElse`** gestisce il caso in cui l'`Optional` è vuoto.
 
-## fullUpdateAuthor
+## fullUpdateAuthor (Refactor CreateAuthor)
 Qui vedo che posso riutilizzare il createAuthor del servizio, quindi faccio un refactor in AuthorService e modificio il metodo da createAuthor in saveAuthor (così da poterlo riutilizzare anche facendo l'update) e ottengo
 
 ``` JAVA
@@ -639,3 +639,80 @@ public interface AuthorService {
     boolean existsById(Long id);  
 }
 ```
+
+## UpdateBook
+Stessa cosa qui, perchè anche qui andremo ad utilizzare 
+``` JAVA
+@PutMapping("/books/{isbn}")  
+``` 
+L' unica cosa che cambia dal create all' update è l' HTTP STATUS code che sarà
+- Creazione -201
+- Update - 200
+
+Quindi facciamo un refactor e passiamo da 
+``` JAVA
+// BookController.java
+
+@PutMapping("/books/{isbn}")  
+public ResponseEntity<BookDto> createBook(  
+        @PathVariable ("isbn") String isbn,  
+        @RequestBody BookDto bookDto){  
+  
+    BookEntity bookEntity =  bookMapper.mapfrom(bookDto);  
+  
+    BookEntity savedBookEntity = bookService.createBook(isbn,bookEntity);  
+  
+    BookDto savedBookDto = bookMapper.mapto(savedBookEntity);  
+  
+    return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);  
+}
+```
+
+a 
+``` JAVA
+// BookController.java
+
+@PutMapping("/books/{isbn}")  
+public ResponseEntity<BookDto> createUpdateBook(@PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto){  
+  
+    BookEntity bookEntity =  bookMapper.mapfrom(bookDto);  
+      
+    boolean bookExists =  bookService.existsByIsbn(isbn);  
+  
+    BookEntity savedBookEntity = bookService.createUpdateBook(isbn,bookEntity);  
+    BookDto savedBookDto = bookMapper.mapto(savedBookEntity);  
+  
+    if (bookExists)  
+        return new ResponseEntity<>(savedBookDto, HttpStatus.OK); // update  
+  else  
+ return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);  
+}
+``` 
+e facciamo anche un refactor del metodo createBook del servizio, perchè se passiamo un ISBN esistente a **save**, allora andrà a fare l'update, se invece l'ISBN non esiste, allora andrà a crearlo
+``` JAVA
+//BookService.java
+
+public interface BookService {  
+    BookEntity createBook(String isbn, BookEntity bookToCreate);  
+  
+    List<BookEntity> findAll();  
+  
+    Optional<BookEntity> findOne(String isbn);  
+}
+``` 
+a
+``` JAVA
+//BookService.java
+
+public interface BookService {  
+    BookEntity createUpdateBook(String isbn, BookEntity bookToCreate);  
+  
+    List<BookEntity> findAll();  
+  
+    Optional<BookEntity> findOne(String isbn);  
+}
+``` 
+
+
+
+
