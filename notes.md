@@ -1,3 +1,6 @@
+# Pesistance Layer
+Entity + Repository 
+![enter image description here](https://i.ibb.co/y0LJnsM/Screenshot-2024-08-07-004402.png)
 # Entity
 ## Cos'è
 Una classe **entity** rappresenta una tabella in un database relazionale.
@@ -52,7 +55,7 @@ public class Book {
   
     @ManyToOne(cascade = CascadeType.ALL)  
     @JoinColumn(name = "author_id")
-    private Author authorEntity;  
+    private Author author;  
   
 }
 ```
@@ -65,10 +68,13 @@ public class Book {
 
 
 # Hibernate Auto DDL
+Hibernate è uno strumento di mapping object-relational (ORM) open source che fornisce un framework per mappare i modelli di dominio orientati agli oggetti ai database relazionali per le applicazioni web.
+
 [Guida](https://docs.spring.io/spring-boot/docs/2.0.0.M6/reference/html/howto-database-initialization.html)
+
 Setta il DB schema in modo automatico, basta aggiungere `spring.jpa.hibernate.ddl-auto=update` in **resources/application.properties** e non dobbiamo scrivere una singola riga di SQL
 
-# Repository
+# Repository (una per ogni entità)
 
 La "respository" (AuthorRepository/Book Repository)  è l’astrazione che usiamo per salvare e ottenere cose dal DB (evitando di scrivere SQL)
 Una cosa che fa Spring è creare l’implementazione delle repository per noi, quindi noi andremo **solo** a creare l’interfaccia; tutto questo è possibile andando ad estendere con la corretta Repository, per esempio: 
@@ -83,7 +89,7 @@ dove
 
 > **`@Repository`** : funziona come @Bean, ma è per le repository
 
-Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo:
+Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro) 
 ```JAVA
 public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> { 
  
@@ -116,7 +122,198 @@ public interface CrudRepository <T, ID> extends org.springframework.data.reposit
 
 ## Fare query piu' complicate (no CRUD)
 
- - Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
-- Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
+ 1. Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
+ 2. Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
+
+# Jackson
+Jackson è una popolare libreria per la serializzazione/deserializzazione di oggetti Java in vari formati di testo. La classe  ObjectMapper è il modo principale della libreria per lavorare con il formato JSON.
+Marshalling = Java Object -> JSON
+Unmarshalling = JSON -> Java Object
+
+# REST API
+`/books` si chiama **risorsa**. La convezione è quella di usare sempre il termine al plurale
+## API books (ID nostro)
+```c++
+ PUT /books {isbn}		// Siccome siamo noi che diamo l' ID nel DB, non usiamo POST, ma PUT (convenzione). 
+						// Ritorna il libro creato + HTTP STATUS 201 se creato
+				   
+ GET /books/{isbn}		// Ritorna il libro trovato (se trovato) + HTTP STATUS 200
+						// Ritorna un body vuoto (se non trovato) + HTTP STATUS 404
+				   
+ GET /books				// Ritorna SEMPRE HTTP STATUS 200 (anche se non c'è nulla)
+ 
+ PUT /books/{isbn}		// Quando facciamo l'update ci aspettiamo il libro + HTTP STATUS  200 (non 201)
+						// Qui devo fornire TUTTI gli attributi e l'intero oggetto viene aggiornato nel DB
+ 
+ PATCH /books/{isbn}	// SOLO gli attributi che vengono passati vengono aggiornati nel DB
+						// Se tutto va bene, ottengo HTTP STATUS 200
+ 
+ DELETE /books/{isbn} //Non ritorna un body + HTTPS STATUS 204
+```
+## Authors API (ID del DB)
+```c++
+ POST/authors	// Ritorna l'author object nel response body + HTTP STATUS 201
+						
+ GET /authors/{id}		
+				   
+ GET /authors
+ 
+ PUT /authors/{id}		
+ 
+ PATCH /authors/{id}	
+ 
+ DELETE /authors/{id}
+```
+
+# Presentation Layer
+Usaremo i controller per costuire il presentation layer.
+Usaremo **`@RestController`** per indicare che è un **RestController**
+``` JAVA
+@RestController  
+public class AuthorController {  
+}
+```
+
+Nel controller andremo a creare le funzionalità CRUD.
+## Create
+``` JAVA
+@RestController  
+public class AuthorController {  
+  
+    @PostMapping(path = "/authors")  
+    public Author createAuthor(@RequestBody Author author) {  
+          
+    }  
+}
+```
+`@PostMapping(path = "/authors"` ci indica che è un POST endpoint 
+
+Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` che ci assicura che 
+
+ 1. verrà letto il body (che contiene il JSON 
+ 2. verrà convertito in un Java Object
+ 
+>  **@RequestBody** dice a Spring di cercare nell' HTTP Request Body un Author Object rappresentato come JSON e lo converte in Java Object
+
+# Service Layer
+Serve a "linkare" il presentation con il persistance layer.
+
+Creiamo una interfaccia (così da avere piu' implementazioni future)
+```JAVA
+public interface AuthorService {  
+    Author createAuthor(Author author);  //prende in input un Author, che è l' author che vogliamo creare 
+}
+```
 
 
+### Injection del Servizio (back to Presentation Layer)
+Ovviamente per usare il servizio all'interno del controller, useremo il pattern *dependency injection* e otteniamo:
+```JAVA
+@RestController  
+public class AuthorController {  
+  
+    private AuthorService authorService;  
+  
+    public AuthorController(AuthorService authorServices) {  
+        this.authorService = authorService;  
+    }  
+  
+    @PostMapping(path = "/authors")  
+    public Author createAuthor(@RequestBody Author author) {  
+        return authorService.createAuthor(author);  
+  
+    }  
+}
+```
+Facendo così però è ancora lontano dalla perfezione, perchè stiamo usando nel **Presentation Layer** l' **Author Object**, la quale è una **Entity** che dovrebbe esistere nel **Persistance Layer** e al massimo nel **Service Layer** e non vogliamo in nessun modo che il Presentation Layer sappia come funziona il **Persistance Layer**.
+
+Per ovviare a questo problema useremo i **DTO**, così che il **Service Layer** continui a ritornare una **Entity**, ma il **Presentation Layer** lo mapperà in un **DTO** e sarà proprio un **DTO** ciò che manderà e si aspetterà in cose come il **request body**
+
+## DTO
+Il DTO sarà un POJO
+```JAVA
+@Data  
+@AllArgsConstructor  
+@NoArgsConstructor // per Jackson
+@Builder  
+public class AuthorDto {  
+  
+    private Long id;  
+  
+    private String name;  
+  
+    private Integer age;  
+}
+```
+
+Dopo aver fatto il DTO quindi, andiamo a modificare il controller:
+```JAVA
+@RestController  
+public class AuthorController {  
+  
+    private AuthorService authorService;  
+  
+    public AuthorController(AuthorService authorServices) {  
+        this.authorService = authorServices;  
+    }  
+  
+    @PostMapping(path = "/authors")  
+    public AuthorDto createAuthor(@RequestBody AuthorDto author) {  
+        return authorService.createAuthor(author);  
+    }  
+}
+```
+
+Adesso però abbiamo ancora un problema.
+``` java
+    return authorService.createAuthor(author); 
+```
+vuole ancora un **author** un tipo author. 
+
+Per convertire una Entity in un DTO e viceversa useremo la libreria [ModelMapper](https://modelmapper.org/) --> [youtube](https://www.youtube.com/watch?v=Nv2DERaMx-4&t=14799s)
+
+.
+.
+.
+.
+
+otteniamo l'implementazione di AuthorMapper:
+```JAVA
+@Component //aggiunto così possiamo fare l'inject
+public class AuthorMapperImpl implements Mapper<AuthorEntity, AuthorDto> {  
+  
+    private ModelMapper modelMapper;  
+  
+    public AuthorMapperImpl(ModelMapper modelMapper) {  
+        this.modelMapper = modelMapper;  
+    }  
+  
+    @Override  
+  public AuthorDto mapto(AuthorEntity authorEntity) {  
+        return modelMapper.map (authorEntity, AuthorDto.class);  
+    }  
+  
+    @Override  
+  public AuthorEntity mapfrom(AuthorDto authorDto) {  
+        return modelMapper.map(authorDto, AuthorEntity.class);  
+    }  
+}
+```
+
+andiamo ad implementare il Servizio (AuthorServiceImpl)
+``` JAVA
+@Service  
+public class AuthorServiceImpl implements AuthorService {  
+  
+    private AuthorRepository authorRepository;  
+  
+    public AuthorServiceImpl(AuthorRepository authorRepository) {  
+        this.authorRepository = authorRepository;  
+    }  
+  
+    @Override  
+  public AuthorEntity createAuthor(AuthorEntity authorEntity) {  
+        return authorRepository.save(authorEntity);  
+    }  
+}
+```
