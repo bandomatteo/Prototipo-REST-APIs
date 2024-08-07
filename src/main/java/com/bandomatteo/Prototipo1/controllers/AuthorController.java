@@ -4,6 +4,8 @@ import com.bandomatteo.Prototipo1.domain.dto.AuthorDto;
 import com.bandomatteo.Prototipo1.domain.entities.AuthorEntity;
 import com.bandomatteo.Prototipo1.mappers.Mapper;
 import com.bandomatteo.Prototipo1.services.AuthorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +24,11 @@ public class AuthorController {
     }
 
     @PostMapping(path = "/authors")
-    public AuthorDto createAuthor(@RequestBody AuthorDto author) {
+    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
 
         AuthorEntity authorEntity = authorMapper.mapfrom(author);
         AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
 
-        return authorMapper.mapto(savedAuthorEntity);
+        return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);
     }
 }
