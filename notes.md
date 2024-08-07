@@ -1,5 +1,5 @@
 # Pesistance Layer
-Entity + Repository
+Entity + Repository 
 ![enter image description here](https://i.ibb.co/y0LJnsM/Screenshot-2024-08-07-004402.png)
 # Entity
 ## Cos'è
@@ -31,11 +31,11 @@ public class Author {
 
 > [Utile](https://stackoverflow.com/questions/68314072/why-to-use-allargsconstructor-and-noargsconstructor-together-over-an-entity) per `@AllArgsConstructor`  e per `@NoArgsConstructor`
 
-- **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
-- **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
-- **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
-- **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
-- **`@GeneratedValue`**: `(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")`: Per dire che sarà un ID incrementale
+ - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
+ - **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
+ - **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
+ - **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
+ - **`@GeneratedValue`**: `(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")`: Per dire che sarà un ID incrementale
 
 
 # Esempio (Book) - Id nostro
@@ -59,12 +59,12 @@ public class Book {
   
 }
 ```
-- **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
-- **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
-- **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
-- **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
-- **`@ManyToOne(cascade = CascadeType.ALL)`**:Specifica la relazione con l' altra tabella. `cascade = CascadeType.ALL` indica che quando ritorniamo un libro, ritorniamo anche l' autore e se dovessimo modificare anche l'autore del libro, i dati verrebbero salvati anche nel DB. Qualora salvassimo un nuovo libro e passassimo un autore, verrebbe anche creato l'autore nel DB
-- **`@JoinColumn(name = "author_id")`** Per dire a quale campo della tabella del DB ci si riferisce
+ - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
+ - **`@Entity`** : Le entità in JPA non sono altro che POJO che rappresentano dati che possono essere persistiti nel database. Un'entità rappresenta una tabella memorizzata in un database. Ogni istanza di un'entità rappresenta una riga nella tabella.
+ - **`@Table(name = "tableInDB")`** : Ci dice a quale tabella fa riferimento nel DB
+ - **`@Id`**  : Per dire che sarà l'ID nella nostra tabella
+ - **`@ManyToOne(cascade = CascadeType.ALL)`**:Specifica la relazione con l' altra tabella. `cascade = CascadeType.ALL` indica che quando ritorniamo un libro, ritorniamo anche l' autore e se dovessimo modificare anche l'autore del libro, i dati verrebbero salvati anche nel DB. Qualora salvassimo un nuovo libro e passassimo un autore, verrebbe anche creato l'autore nel DB
+ - **`@JoinColumn(name = "author_id")`** Per dire a quale campo della tabella del DB ci si riferisce
 
 
 # Hibernate Auto DDL
@@ -77,19 +77,19 @@ Setta il DB schema in modo automatico, basta aggiungere `spring.jpa.hibernate.dd
 # Repository (una per ogni entità)
 
 La "respository" (AuthorRepository/Book Repository)  è l’astrazione che usiamo per salvare e ottenere cose dal DB (evitando di scrivere SQL)
-Una cosa che fa Spring è creare l’implementazione delle repository per noi, quindi noi andremo **solo** a creare l’interfaccia; tutto questo è possibile andando ad estendere con la corretta Repository, per esempio:
+Una cosa che fa Spring è creare l’implementazione delle repository per noi, quindi noi andremo **solo** a creare l’interfaccia; tutto questo è possibile andando ad estendere con la corretta Repository, per esempio: 
 ```JAVA 
 @Repository
 public interface AuthorRepository extends CrudRepository<Author, Long> { }
 ```
 dove
 
-- `Author` è il l'entity con cui andiamo ad interagire
-- `Long` è il tipo dell' ID dell' entity
+ - `Author` è il l'entity con cui andiamo ad interagire
+ - `Long` è il tipo dell' ID dell' entity
 
 > **`@Repository`** : funziona come @Bean, ma è per le repository
 
-Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro)
+Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro) 
 ```JAVA
 public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> { 
  
@@ -122,8 +122,8 @@ public interface CrudRepository <T, ID> extends org.springframework.data.reposit
 
 ## Fare query piu' complicate (no CRUD)
 
-1. Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
-2. Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
+ 1. Chiamando il metodo con un nome significativo --> [youtube](https://youtu.be/Nv2DERaMx-4?si=XNciK9ECc2Aok4ix&t=12652) e [documentazione ufficiale](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
+ 2. Chiamando il metodo con un nome non significativo  (**HQL**). Qui usiamo l'annotazione `@Query("codice HQL qui)` nel metodo dentro alla repository --> [youtube](https://youtu.be/Nv2DERaMx-4?si=xL75wJ_l2KMOanQv&t=13022)
 
 # Jackson
 Jackson è una popolare libreria per la serializzazione/deserializzazione di oggetti Java in vari formati di testo. La classe  ObjectMapper è il modo principale della libreria per lavorare con il formato JSON.
@@ -186,13 +186,13 @@ public class AuthorController {
     }  
 }
 ```
-`@PostMapping(path = "/authors")` ci indica che è un HTTP POST endpoint
+`@PostMapping(path = "/authors")` ci indica che è un HTTP POST endpoint 
 
-Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` che ci assicura che
+Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` che ci assicura che 
 
-1. verrà letto il body (che contiene il JSON)
-2. verrà convertito in un Java Object
-
+ 1. verrà letto il body (che contiene il JSON)
+ 2. verrà convertito in un Java Object
+ 
 >  **@RequestBody** dice a Spring di cercare nell' HTTP Request Body un Author Object rappresentato come JSON e lo converte in Java Object
 
 # Service Layer
@@ -268,7 +268,7 @@ Adesso però abbiamo ancora un problema.
 ``` java
     return authorService.createAuthor(author); 
 ```
-vuole ancora un **author** un tipo author.
+vuole ancora un **author** un tipo author. 
 
 Per convertire una Entity in un DTO e viceversa useremo la libreria [ModelMapper](https://modelmapper.org/) --> [youtube](https://www.youtube.com/watch?v=Nv2DERaMx-4&t=14799s)
 
@@ -353,7 +353,7 @@ public interface Mapper <A,B> {
 ```
 Possiamo implementare questa interfaccia con i **beans** e possiamo fare l'inject di questi beans quando ci servono.
 ### Implementazione AuthorMapper
-Usiamo  `@Component` così da renderlo injectable
+Usiamo  `@Component` così da renderlo injectable 
 
 ``` JAVA
 @Component  
@@ -430,8 +430,8 @@ public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
     return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);  
 }
 ``` 
-**tipo di ritorno:** `AuthorDto `--->` ResponseEntity<AuthorDto>`: ci permette di cambiare lo status code della response
-**return**: `return authorMapper.mapto(savedAuthorEntity);` --->`return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);`
+ **tipo di ritorno:** `AuthorDto `--->` ResponseEntity<AuthorDto>`: ci permette di cambiare lo status code della response
+ **return**: `return authorMapper.mapto(savedAuthorEntity);` --->`return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);`
 
 ## Book DTO
 Anche questo sarà un POJO e risulterà così:
@@ -491,7 +491,7 @@ public List<AuthorDto> listAuthors(){
 }
 ```
 
-Spiegazione del Metodo:
+Spiegazione del Metodo: 
 ``` JAVA
 List<AuthorEntity> authors = authorService.findAll(); 
 ``` 
@@ -557,5 +557,70 @@ Questa riga raccoglie gli elementi dello stream in una lista. Il Collector Colle
 
 Usiamo **StreamSupport** per prendere lo **Spliterator** dal **findAll** (che è un **Iterable**)  e lo mettiamo in una **lista**
 
-`Iterable <Entity>` <---Spliterator --- `List <Entity>` 
+ `Iterable <Entity>` <---Spliterator --- `List <Entity>` 
 
+# getAuthorByID- Author Service
+## Spiegazione Lamda
+### Codice di Esempio
+
+``` JAVA
+Optional<AuthorEntity> foundAuthor = authorService.findOne(id);
+
+return foundAuthor.map(authorEntity -> {
+    AuthorDto authorDto = authorMapper.mapTo(authorEntity);
+    return new ResponseEntity<>(authorDto, HttpStatus.OK);
+}).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));` 
+``` 
+
+### Spiegazione Dettagliata
+
+1.  **Recupero dell'Autore**
+   
+    
+    `Optional<AuthorEntity> foundAuthor = authorService.findOne(id);` 
+    
+    Qui, `authorService.findOne(id)` cerca un autore con l'ID specificato e restituisce un `Optional<AuthorEntity>`. Questo `Optional` può contenere un autore (`AuthorEntity`) o essere vuoto se l'autore non viene trovato.
+    
+2.  **Uso di `map`**
+  
+    ``` JAVA
+    return foundAuthor.map(authorEntity -> {
+        AuthorDto authorDto = authorMapper.mapTo(authorEntity);
+        return new ResponseEntity<>(authorDto, HttpStatus.OK);
+    }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    ```
+    **Cosa fa `map`?**
+    
+    -   **`map`** è un metodo di `Optional` che applica una funzione al valore contenuto nell'`Optional`, se presente, e restituisce un nuovo `Optional` con il risultato della funzione.
+    -   Se l'`Optional` è vuoto, la funzione non viene applicata e viene restituito l'`Optional` vuoto senza modifiche.
+    
+    **Cosa fa la Lambda all'interno di `map`?**
+    
+    -   **`authorEntity -> { ... }`** è una lambda che riceve `authorEntity` come input.
+    -   All'interno della lambda:
+        -   **`AuthorDto authorDto = authorMapper.mapTo(authorEntity);`**: Converte l'oggetto `AuthorEntity` in un oggetto `AuthorDto` usando un mapper.
+        -   **`return new ResponseEntity<>(authorDto, HttpStatus.OK);`**: Crea una risposta HTTP con il DTO e uno stato HTTP OK (200), indicando che tutto è andato bene.
+    
+    In altre parole, se `foundAuthor` contiene un autore, la lambda converte quell'autore in un DTO e restituisce una risposta HTTP con stato OK.
+    
+3.  **Gestione dell'Optional Vuoto**
+    
+
+    
+    `.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));` 
+    
+    -   Se l'`Optional` è vuoto (cioè l'autore non è stato trovato), `orElse` restituisce una risposta HTTP con stato NOT FOUND (404), indicando che la risorsa richiesta non esiste.
+
+### Perché Usare `map` e Lambda?
+
+-   **`map`**: Serve per trasformare il valore all'interno dell'`Optional`. Se trovi l'autore, vuoi trasformarlo in una risposta HTTP. Se non trovi l'autore, non fai nulla con la lambda ma gestisci il caso con `orElse`.
+    
+-   **Lambda**: Rende il codice più compatto e leggibile. Senza lambda, dovresti scrivere una classe o un metodo separato per gestire la trasformazione, il che sarebbe più lungo e meno chiaro.
+    
+
+
+### Riassumendo
+
+1.  **`map`** è usato per applicare una funzione se l'`Optional` contiene un valore.
+2.  **Lambda** è la funzione che definisce cosa fare con quel valore.
+3.  **`orElse`** gestisce il caso in cui l'`Optional` è vuoto.
