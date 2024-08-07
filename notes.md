@@ -459,7 +459,7 @@ public class BookController {
 public ResponseEntity<BookDto> createBook(  @PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto) {//implementazone  }
 }
 ``` 
-##BookService
+## BookService
 ``` JAVA
 @Service  
 public class BookServiceImpl implements BookService {  
@@ -477,5 +477,85 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(bookToCreate);  
     }  
 }
+```
+
+# Read (CRUD) Author  Controller
+``` JAVA
+@GetMapping(path="/authors")  
+public List<AuthorDto> listAuthors(){  
+    List<AuthorEntity> authors = authorService.findAll();  
+  
+    authors.stream()  
+            .map(authorMapper::mapTo)  
+            .collect(Collectors.toList());    
+}
+```
+
+Spiegazione del Metodo:
+``` JAVA
+List<AuthorEntity> authors = authorService.findAll(); 
 ``` 
+
+Questo riga recupera una lista di entità AuthorEntity dal servizio authorService. Presumibilmente, authorService è un componente di servizio che interagisce con il database o un'altra fonte di dati per ottenere tutte le entità degli autori.
+
+---
+``` JAVA
+authors.stream()
+``` 
+Questa riga crea uno stream dalla lista di AuthorEntity. Gli stream in Java forniscono un modo per elaborare sequenze di elementi in modo dichiarativo.
+``` JAVA
+.map(authorMapper::mapTo)
+``` 
+Il metodo map applica una funzione a ciascun elemento dello stream. In questo caso, authorMapper::mapTo è un riferimento al metodo mapTo di un oggetto authorMapper. Questo metodo converte ogni AuthorEntity in un oggetto AuthorDto. AuthorDto è probabilmente una classe che rappresenta i dati dell'autore in un formato più adatto per il client.
+``` JAVA
+.collect(Collectors.toList());
+``` 
+Questa riga raccoglie gli elementi trasformati dallo stream in una lista. Dopo aver mappato ogni AuthorEntity in AuthorDto, la lista finale di AuthorDto viene raccolta e restituita.
+
+---
+# Read (CRUD) Author Service
+``` JAVA
+@Override  
+public List<AuthorEntity> findAll() {  
+    return StreamSupport.stream(authorRepository  
+  .findAll()  
+                    .spliterator(),  
+                    false)  
+            .collect(Collectors.toList());   
+}
+``` 
+
+---
+
+``` JAVA
+authorRepository.findAll()
+``` 
+
+authorRepository è probabilmente un'istanza di un'interfaccia che estende CrudRepository, JpaRepository, o una simile interfaccia di Spring Data JPA. Il metodo findAll() restituisce tutti gli oggetti AuthorEntity dal database. Questa chiamata restituisce un oggetto di tipo Iterable<AuthorEntity>, che rappresenta una sequenza di entità.
+
+----
+``` JAVA
+spliterator()
+```
+
+spliterator() è un metodo che fornisce un Spliterator per iterare sugli elementi in Iterable. Spliterator è un'interfaccia introdotta in Java 8 per la suddivisione e l'elaborazione parallela di sequenze di elementi.
+
+---
+``` JAVA
+StreamSupport.stream(..., false)
+``` 
+
+Questo metodo crea uno Stream a partire dallo Spliterator. Il secondo argomento false indica che lo stream non deve essere parallelo. Se fosse true, lo stream sarebbe parallelo e potrebbe essere elaborato in parallelo.
+
+---
+``` JAVA
+.collect(Collectors.toList())
+``` 
+Questa riga raccoglie gli elementi dello stream in una lista. Il Collector Collectors.toList() accumula gli elementi dello stream in una List.
+
+---
+
+Usiamo **StreamSupport** per prendere lo **Spliterator** dal **findAll** (che è un **Iterable**)  e lo mettiamo in una **lista**
+
+`Iterable <Entity>` <---Spliterator --- `List <Entity>` 
 
