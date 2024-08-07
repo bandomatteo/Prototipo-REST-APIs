@@ -5,6 +5,10 @@ import com.bandomatteo.Prototipo1.repositories.BookRepository;
 import com.bandomatteo.Prototipo1.services.BookService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -19,5 +23,15 @@ public class BookServiceImpl implements BookService {
 
         bookToCreate.setIsbn(isbn);
         return bookRepository.save(bookToCreate);
+    }
+
+    @Override
+    public List<BookEntity> findAll() {
+        return StreamSupport.
+                stream(bookRepository
+                        .findAll()
+                        .spliterator(),
+                        false)
+                .collect(Collectors.toList());
     }
 }
