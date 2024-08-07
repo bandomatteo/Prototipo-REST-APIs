@@ -624,3 +624,18 @@ return foundAuthor.map(authorEntity -> {
 1.  **`map`** è usato per applicare una funzione se l'`Optional` contiene un valore.
 2.  **Lambda** è la funzione che definisce cosa fare con quel valore.
 3.  **`orElse`** gestisce il caso in cui l'`Optional` è vuoto.
+
+## fullUpdateAuthor
+Qui vedo che posso riutilizzare il createAuthor del servizio, quindi faccio un refactor in AuthorService e modificio il metodo da createAuthor in saveAuthor (così da poterlo riutilizzare anche facendo l'update) e ottengo
+
+``` JAVA
+public interface AuthorService {  
+    AuthorEntity saveAuthor(AuthorEntity authorEntity);  
+  
+    List<AuthorEntity> findAll();  
+  
+    Optional<AuthorEntity> findOne(Long id);  
+  
+    boolean existsById(Long id);  
+}
+```
