@@ -15,7 +15,7 @@ Assicurati di avere installato i seguenti strumenti:
 - Maven
 - Docker
 
-## ⚙️Configurazione del database
+## ⚙️ Configurazione del database
 
 Il progetto utilizza un database PostgreSQL. È possibile avviare un'istanza di PostgreSQL utilizzando Docker. Esegui il seguente comando per avviare il container:
 
