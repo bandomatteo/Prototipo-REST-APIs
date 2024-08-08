@@ -1,4 +1,4 @@
-# Pesistance Layer
+# Persistence Layer
 Entity + Repository 
 ![enter image description here](https://i.ibb.co/y0LJnsM/Screenshot-2024-08-07-004402.png)
 
@@ -497,7 +497,7 @@ Spiegazione del Metodo:
 List<AuthorEntity> authors = authorService.findAll(); 
 ```
 
-Questo riga recupera una lista di entità AuthorEntity dal servizio authorService. Presumibilmente, authorService è un componente di servizio che interagisce con il database o un'altra fonte di dati per ottenere tutte le entità degli autori.
+Questa riga recupera una lista di entità AuthorEntity dal servizio authorService. Presumibilmente, authorService è un componente di servizio che interagisce con il database o un'altra fonte di dati per ottenere tutte le entità degli autori.
 
 ---
 ``` JAVA
@@ -646,7 +646,7 @@ Stessa cosa qui, perchè anche qui andremo ad utilizzare
 ``` JAVA
 @PutMapping("/books/{isbn}")  
 ```
-L' unica cosa che cambia dal create all' update è l' HTTP STATUS code che sarà
+L' unica cosa che cambia dal **create** all' update è l'HTTP STATUS code che sarà
 - Creazione -201
 - Update - 200
 
