@@ -1,6 +1,6 @@
-# 📚 Prototipo1
+# 📚 Prototipo-Rest-APis
 
-Prototipo1 è un progetto Spring Boot che espone delle REST API per la gestione di libri e autori. Utilizza un database PostgreSQL e include funzionalità per la creazione, aggiornamento, lettura e cancellazione di autori e libri.
+Prototipo-Rest-APis è un progetto Spring Boot che espone delle REST API per la gestione di libri e autori. Utilizza un database PostgreSQL e include funzionalità per la creazione, aggiornamento, lettura e cancellazione di autori e libri.
 
 ## 📋 Struttura del progetto
 
@@ -32,7 +32,7 @@ Per compilare ed eseguire il progetto, segui questi passaggi:
 1. Clona il repository:
 
    ```sh
-   git clone https://github.com/bandomatteo/Prototipo1.git
+   git clone https://github.com/bandomatteo/Prototipo-REST-APIs
    cd Prototipo1
    ```
 
