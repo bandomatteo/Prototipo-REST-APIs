@@ -1,6 +1,6 @@
-# 📚 Prototipo-Rest-APis
+# 📚 Prototipo-Rest-APIs
 
-Prototipo-Rest-APis è un progetto Spring Boot che espone delle REST API per la gestione di libri e autori. Utilizza un database PostgreSQL e include funzionalità per la creazione, aggiornamento, lettura e cancellazione di autori e libri.
+Prototipo-Rest-APIs è un progetto Spring Boot che espone delle REST API per la gestione di libri e autori. Utilizza un database PostgreSQL e include funzionalità per la creazione, aggiornamento, lettura e cancellazione di autori e libri.
 
 ## 📋 Struttura del progetto
 
