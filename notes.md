@@ -1,6 +1,7 @@
 # Pesistance Layer
 Entity + Repository 
 ![enter image description here](https://i.ibb.co/y0LJnsM/Screenshot-2024-08-07-004402.png)
+
 # Entity
 ## Cos'è
 Una classe **entity** rappresenta una tabella in un database relazionale.
@@ -15,13 +16,13 @@ Una classe **entity** rappresenta una tabella in un database relazionale.
 @Entity  
 @Table(name = "authors")  
 public class Author { 
- 
-	@Id  
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
+
+    @Id  
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")
     private Long id;  
-    
+
     private String name;  
-    
+
     private Integer age;  
 }
 ```
@@ -47,16 +48,16 @@ public class Author {
 @Entity  
 @Table(name = "books")  
 public class Book {  
-  
-	@Id  
-	private String isbn;  
-  
-	private String title;  
-  
+
+    @Id  
+    private String isbn;  
+
+    private String title;  
+
     @ManyToOne(cascade = CascadeType.ALL)  
     @JoinColumn(name = "author_id")
     private Author author;  
-  
+
 }
 ```
  - **`@Builder`** :L'annotazione `@Builder` in Spring Boot semplifica la creazione degli oggetti e migliora la leggibilità del codice
@@ -92,29 +93,29 @@ dove
 Estendendo `CrudRepository< , >` abbiamo accesso a tutto questo: (**CRUD** + altro) 
 ```JAVA
 public interface CrudRepository <T, ID> extends org.springframework.data.repository.Repository<T,ID> { 
- 
+
     <S extends T> S save(S entity);  
-  
+
     <S extends T> java.lang.Iterable<S> saveAll(java.lang.Iterable<S> entities);  
-  
+
     java.util.Optional<T> findById(ID id);  
-  
+
     boolean existsById(ID id);  
-  
+
     java.lang.Iterable<T> findAll();  
-  
+
     java.lang.Iterable<T> findAllById(java.lang.Iterable<ID> ids);  
-  
+
     long count();  
-  
+
     void deleteById(ID id);  
-  
+
     void delete(T entity);  
-  
+
     void deleteAllById(java.lang.Iterable<? extends ID> ids);  
-  
+
     void deleteAll(java.lang.Iterable<? extends T> entities);  
-  
+
     void deleteAll();  
 }
 ```
@@ -179,10 +180,10 @@ Nel controller andremo a creare le funzionalità CRUD.
 ``` JAVA
 @RestController  
 public class AuthorController {  
-  
+
     @PostMapping(path = "/authors")  
     public Author createAuthor(@RequestBody Author author) {  
-          
+
     }  
 }
 ```
@@ -192,7 +193,7 @@ Noi ci aspettiamo un Author JSON nel request body, quindi usiamo `@RequestBody` 
 
  1. verrà letto il body (che contiene il JSON)
  2. verrà convertito in un Java Object
- 
+
 >  **@RequestBody** dice a Spring di cercare nell' HTTP Request Body un Author Object rappresentato come JSON e lo converte in Java Object
 
 # Service Layer
@@ -211,17 +212,17 @@ Ovviamente per usare il servizio all'interno del controller, useremo il pattern 
 ```JAVA
 @RestController  
 public class AuthorController {  
-  
+
     private AuthorService authorService;  
-  
+
     public AuthorController(AuthorService authorServices) {  
         this.authorService = authorService;  
     }  
-  
+
     @PostMapping(path = "/authors")  
     public Author createAuthor(@RequestBody Author author) {  
         return authorService.createAuthor(author);  
-  
+
     }  
 }
 ```
@@ -237,11 +238,11 @@ Il DTO sarà un POJO
 @NoArgsConstructor // per Jackson
 @Builder  
 public class AuthorDto {  
-  
+
     private Long id;  
-  
+
     private String name;  
-  
+
     private Integer age;  
 }
 ```
@@ -250,13 +251,13 @@ Dopo aver fatto il DTO quindi, andiamo a modificare il controller del Presentati
 ```JAVA
 @RestController  
 public class AuthorController {  
-  
+
     private AuthorService authorService;  
-  
+
     public AuthorController(AuthorService authorServices) {  
         this.authorService = authorServices;  
     }  
-  
+
     @PostMapping(path = "/authors")  
     public AuthorDto createAuthor(@RequestBody AuthorDto author) {  
         return authorService.createAuthor(author);  
@@ -280,7 +281,7 @@ che sarà tipo:
 @Configuration  
 public class MapperConfig {  
     @Bean  
-  public ModelMapper modelMapper() {  
+    public ModelMapper modelMapper() {  
         return new ModelMapper();  
     }  
 }
@@ -345,9 +346,9 @@ Conclusione
 Ora andiamo a creare una nuova folder chiamata "mappers" e per tenere le cose pulite e per permetterci di swappare tra future librerie di mapping piu' avanti, andiamo a creare una interfaccia chiamata Mapper che andrà a contenere tutta la logica per mappare:
 ``` JAVA
 public interface Mapper <A,B> {  
-  
+
     B mapto(A a);  
-  
+
     A mapfrom(B b);  
 }
 ```
@@ -358,24 +359,24 @@ Usiamo  `@Component` così da renderlo injectable
 ``` JAVA
 @Component  
 public class AuthorMapperImpl implements Mapper<AuthorEntity, AuthorDto> {  
-  
+
     private ModelMapper modelMapper;  
-  
+
     public AuthorMapperImpl(ModelMapper modelMapper) {  
         this.modelMapper = modelMapper;  
     }  
-  
+
     @Override  
-  public AuthorDto mapto(AuthorEntity authorEntity) {  
+    public AuthorDto mapto(AuthorEntity authorEntity) {  
         return modelMapper.map (authorEntity, AuthorDto.class);  
     }  
-  
+
     @Override  
-  public AuthorEntity mapfrom(AuthorDto authorDto) {  
+    public AuthorEntity mapfrom(AuthorDto authorDto) {  
         return modelMapper.map(authorDto, AuthorEntity.class);  
     }  
 }
-``` 
+```
 
 
 ----
@@ -386,15 +387,15 @@ andiamo ad implementare il Servizio (AuthorServiceImpl)
 ``` JAVA
 @Service  
 public class AuthorServiceImpl implements AuthorService {  
-  
+
     private AuthorRepository authorRepository;  
-  
+
     public AuthorServiceImpl(AuthorRepository authorRepository) {  
         this.authorRepository = authorRepository;  
     }  
-  
+
     @Override  
-  public AuthorEntity createAuthor(AuthorEntity authorEntity) {  
+    public AuthorEntity createAuthor(AuthorEntity authorEntity) {  
         return authorRepository.save(authorEntity);  
     }  
 }
@@ -409,27 +410,27 @@ Siccome il controller ritorna un HTTP STATUS 200 e noi vogliamo HTTP STATUS 201,
 ``` JAVA
 // DA
 
-    @PostMapping(path = "/authors")
-    public AuthorDto createAuthor(@RequestBody AuthorDto author) {
+@PostMapping(path = "/authors")
+public AuthorDto createAuthor(@RequestBody AuthorDto author) {
 
-        AuthorEntity authorEntity = authorMapper.mapfrom(author);
-        AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
+    AuthorEntity authorEntity = authorMapper.mapfrom(author);
+    AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
 
-        return authorMapper.mapto(savedAuthorEntity);
-    }
+    return authorMapper.mapto(savedAuthorEntity);
+}
 }
 
 
 //  A
- @PostMapping(path = "/authors")  
+@PostMapping(path = "/authors")  
 public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {  
-  
+
     AuthorEntity authorEntity = authorMapper.mapfrom(author);  
     AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);  
-  
+
     return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);  
 }
-``` 
+```
  **tipo di ritorno:** `AuthorDto `--->` ResponseEntity<AuthorDto>`: ci permette di cambiare lo status code della response
  **return**: `return authorMapper.mapto(savedAuthorEntity);` --->`return new ResponseEntity<>(authorMapper.mapto(savedAuthorEntity), HttpStatus.CREATED);`
 
@@ -441,37 +442,37 @@ Anche questo sarà un POJO e risulterà così:
 @NoArgsConstructor  
 @Builder  
 public class BookDto {  
-  
+
     private String isbn;  
-  
+
     private String title;  
-  
+
     private AuthorDto authorEntity;  //adesso lavoriamo con i DTO e non con le entity
 }
-``` 
+```
 ## Book Controller
 Siccome l' ISBN sarà nel path usiamo **@PathVariable** per indicare che sarà nel path
 ``` JAVA
 @RestController  
-public class BookController {  
-  
+public class BookController {
+
     @PutMapping("/books/{isbn}")  
-public ResponseEntity<BookDto> createBook(  @PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto) {//implementazone  }
+    public ResponseEntity<BookDto> createBook(@PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto {} 
 }
-``` 
+```
 ## BookService
 ``` JAVA
 @Service  
 public class BookServiceImpl implements BookService {  
-  
+
     private BookRepository bookRepository;  
-  
+
     public BookServiceImpl(BookRepository bookRepository) {  
         this.bookRepository = bookRepository;  
     }  
-  
+
     @Override  
-  public BookEntity createBook(String isbn, BookEntity bookToCreate) {  
+    public BookEntity createBook(String isbn, BookEntity bookToCreate) {  
         //per assicurarci che l'ISBN passato nell'oggetto sia uguale a quello passato nell'URL  
         bookToCreate.setIsbn(isbn);  
         return bookRepository.save(bookToCreate);  
@@ -484,32 +485,32 @@ public class BookServiceImpl implements BookService {
 @GetMapping(path="/authors")  
 public List<AuthorDto> listAuthors(){  
     List<AuthorEntity> authors = authorService.findAll();  
-  
+
     authors.stream()  
-            .map(authorMapper::mapTo)  
-            .collect(Collectors.toList());    
+        .map(authorMapper::mapTo)  
+        .collect(Collectors.toList());    
 }
 ```
 
 Spiegazione del Metodo: 
 ``` JAVA
 List<AuthorEntity> authors = authorService.findAll(); 
-``` 
+```
 
 Questo riga recupera una lista di entità AuthorEntity dal servizio authorService. Presumibilmente, authorService è un componente di servizio che interagisce con il database o un'altra fonte di dati per ottenere tutte le entità degli autori.
 
 ---
 ``` JAVA
 authors.stream()
-``` 
+```
 Questa riga crea uno stream dalla lista di AuthorEntity. Gli stream in Java forniscono un modo per elaborare sequenze di elementi in modo dichiarativo.
 ``` JAVA
 .map(authorMapper::mapTo)
-``` 
+```
 Il metodo map applica una funzione a ciascun elemento dello stream. In questo caso, authorMapper::mapTo è un riferimento al metodo mapTo di un oggetto authorMapper. Questo metodo converte ogni AuthorEntity in un oggetto AuthorDto. AuthorDto è probabilmente una classe che rappresenta i dati dell'autore in un formato più adatto per il client.
 ``` JAVA
 .collect(Collectors.toList());
-``` 
+```
 Questa riga raccoglie gli elementi trasformati dallo stream in una lista. Dopo aver mappato ogni AuthorEntity in AuthorDto, la lista finale di AuthorDto viene raccolta e restituita.
 
 ---
@@ -518,18 +519,18 @@ Questa riga raccoglie gli elementi trasformati dallo stream in una lista. Dopo a
 @Override  
 public List<AuthorEntity> findAll() {  
     return StreamSupport.stream(authorRepository  
-  .findAll()  
-                    .spliterator(),  
-                    false)  
-            .collect(Collectors.toList());   
+                                .findAll()  
+                                .spliterator(),  
+                                false)  
+        .collect(Collectors.toList());   
 }
-``` 
+```
 
 ---
 
 ``` JAVA
 authorRepository.findAll()
-``` 
+```
 
 authorRepository è probabilmente un'istanza di un'interfaccia che estende CrudRepository, JpaRepository, o una simile interfaccia di Spring Data JPA. Il metodo findAll() restituisce tutti gli oggetti AuthorEntity dal database. Questa chiamata restituisce un oggetto di tipo Iterable<AuthorEntity>, che rappresenta una sequenza di entità.
 
@@ -543,14 +544,14 @@ spliterator() è un metodo che fornisce un Spliterator per iterare sugli element
 ---
 ``` JAVA
 StreamSupport.stream(..., false)
-``` 
+```
 
 Questo metodo crea uno Stream a partire dallo Spliterator. Il secondo argomento false indica che lo stream non deve essere parallelo. Se fosse true, lo stream sarebbe parallelo e potrebbe essere elaborato in parallelo.
 
 ---
 ``` JAVA
 .collect(Collectors.toList())
-``` 
+```
 Questa riga raccoglie gli elementi dello stream in una lista. Il Collector Collectors.toList() accumula gli elementi dello stream in una List.
 
 ---
@@ -570,7 +571,7 @@ return foundAuthor.map(authorEntity -> {
     AuthorDto authorDto = authorMapper.mapTo(authorEntity);
     return new ResponseEntity<>(authorDto, HttpStatus.OK);
 }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));` 
-``` 
+```
 
 ### Spiegazione Dettagliata
 
@@ -605,7 +606,7 @@ return foundAuthor.map(authorEntity -> {
     
 3.  **Gestione dell'Optional Vuoto**
     
-
+    
     
     `.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));` 
     
@@ -631,11 +632,11 @@ Qui vedo che posso riutilizzare il createAuthor del servizio, quindi faccio un r
 ``` JAVA
 public interface AuthorService {  
     AuthorEntity saveAuthor(AuthorEntity authorEntity);  
-  
+
     List<AuthorEntity> findAll();  
-  
+
     Optional<AuthorEntity> findOne(Long id);  
-  
+
     boolean existsById(Long id);  
 }
 ```
@@ -644,7 +645,7 @@ public interface AuthorService {
 Stessa cosa qui, perchè anche qui andremo ad utilizzare 
 ``` JAVA
 @PutMapping("/books/{isbn}")  
-``` 
+```
 L' unica cosa che cambia dal create all' update è l' HTTP STATUS code che sarà
 - Creazione -201
 - Update - 200
@@ -655,15 +656,15 @@ Quindi facciamo un refactor e passiamo da
 
 @PutMapping("/books/{isbn}")  
 public ResponseEntity<BookDto> createBook(  
-        @PathVariable ("isbn") String isbn,  
-        @RequestBody BookDto bookDto){  
-  
+    @PathVariable ("isbn") String isbn,  
+    @RequestBody BookDto bookDto){  
+
     BookEntity bookEntity =  bookMapper.mapfrom(bookDto);  
-  
+
     BookEntity savedBookEntity = bookService.createBook(isbn,bookEntity);  
-  
+
     BookDto savedBookDto = bookMapper.mapto(savedBookEntity);  
-  
+
     return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);  
 }
 ```
@@ -674,59 +675,59 @@ a
 
 @PutMapping("/books/{isbn}")  
 public ResponseEntity<BookDto> createUpdateBook(@PathVariable ("isbn") String isbn, @RequestBody BookDto bookDto){  
-  
+
     BookEntity bookEntity =  bookMapper.mapfrom(bookDto);  
-      
+
     boolean bookExists =  bookService.existsByIsbn(isbn);  
-  
+
     BookEntity savedBookEntity = bookService.createUpdateBook(isbn,bookEntity);  
     BookDto savedBookDto = bookMapper.mapto(savedBookEntity);  
-  
+
     if (bookExists)  
         return new ResponseEntity<>(savedBookDto, HttpStatus.OK); // update  
-  else  
- return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);  
+    else  
+        return new ResponseEntity<>(savedBookDto, HttpStatus.CREATED);  
 }
-``` 
+```
 e facciamo anche un refactor del metodo createBook del servizio, perchè se passiamo un ISBN esistente a **save**, allora andrà a fare l'update, se invece l'ISBN non esiste, allora andrà a crearlo
 ``` JAVA
 //BookService.java
 
 public interface BookService {  
     BookEntity createBook(String isbn, BookEntity bookToCreate);  
-  
+
     List<BookEntity> findAll();  
-  
+
     Optional<BookEntity> findOne(String isbn);  
 }
-``` 
+```
 a
 ``` JAVA
 //BookService.java
 
 public interface BookService {  
     BookEntity createUpdateBook(String isbn, BookEntity bookToCreate);  
-  
+
     List<BookEntity> findAll();  
-  
+
     Optional<BookEntity> findOne(String isbn);  
 }
-``` 
+```
 
 
 ## PartialUpdate (AuthorService)
 ``` JAVA
 @Override  
-  public AuthorEntity partialUpdate(Long id, AuthorEntity authorEntity) {  
-  
-        authorEntity.setId(id); //this time we set the ID in the Service  
-  
-  return authorRepository.findById(id).map(existingAuthor -> {  
-            Optional.ofNullable(authorEntity.getName()).ifPresent(existingAuthor::setName);  
-            Optional.ofNullable(authorEntity.getAge()).ifPresent(existingAuthor::setAge);  
-            return authorRepository.save(existingAuthor);  
-        }).orElseThrow(()-> new RuntimeException("Author does not exits with id: " + id));  
-    }  
+public AuthorEntity partialUpdate(Long id, AuthorEntity authorEntity) {  
+
+    authorEntity.setId(id); //this time we set the ID in the Service  
+
+    return authorRepository.findById(id).map(existingAuthor -> {  
+        Optional.ofNullable(authorEntity.getName()).ifPresent(existingAuthor::setName);  
+        Optional.ofNullable(authorEntity.getAge()).ifPresent(existingAuthor::setAge);  
+        return authorRepository.save(existingAuthor);  
+    }).orElseThrow(()-> new RuntimeException("Author does not exits with id: " + id));  
+}  
 }
 ```
 Questa funzione aggiorna parzialmente un'entità `AuthorEntity` nel database, identificata da un ID specifico. 
@@ -766,14 +767,14 @@ Per "nestare" le cose modifichiamo **MapperConfig** :
 @Configuration  
 public class MapperConfig {  
     @Bean  
-  public ModelMapper modelMapper() {  
+    public ModelMapper modelMapper() {  
         ModelMapper modelMapper = new ModelMapper();  
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);  
-  
+
         return modelMapper;  
     }  
 }
-``` 
+```
 
 ### Configurazione della Strategia `LOOSE`
 
