@@ -33,7 +33,7 @@ Per compilare ed eseguire il progetto, segui questi passaggi:
 
    ```sh
    git clone https://github.com/bandomatteo/Prototipo-REST-APIs
-   cd Prototipo1
+   cd Prototipo-REST-APIs
    ```
 
 2. Compila il progetto con Maven:
