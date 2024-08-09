@@ -1,6 +1,6 @@
 package com.bandomatteo.Prototipo1.controllers;
 
-import com.bandomatteo.Prototipo1.domain.dto.BookDto;
+import com.bandomatteo.Prototipo1.domain.dtos.BookDto;
 import com.bandomatteo.Prototipo1.domain.entities.BookEntity;
 import com.bandomatteo.Prototipo1.mappers.Mapper;
 import com.bandomatteo.Prototipo1.repositories.BookRepository;

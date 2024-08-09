@@ -1,4 +1,4 @@
-package com.bandomatteo.Prototipo1.domain.dto;
+package com.bandomatteo.Prototipo1.domain.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

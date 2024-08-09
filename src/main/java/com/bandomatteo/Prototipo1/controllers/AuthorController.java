@@ -1,6 +1,6 @@
 package com.bandomatteo.Prototipo1.controllers;
 
-import com.bandomatteo.Prototipo1.domain.dto.AuthorDto;
+import com.bandomatteo.Prototipo1.domain.dtos.AuthorDto;
 import com.bandomatteo.Prototipo1.domain.entities.AuthorEntity;
 import com.bandomatteo.Prototipo1.mappers.Mapper;
 import com.bandomatteo.Prototipo1.services.AuthorService;
