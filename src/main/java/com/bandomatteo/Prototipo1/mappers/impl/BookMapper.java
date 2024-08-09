@@ -1,6 +1,6 @@
 package com.bandomatteo.Prototipo1.mappers.impl;
 
-import com.bandomatteo.Prototipo1.domain.dto.BookDto;
+import com.bandomatteo.Prototipo1.domain.dtos.BookDto;
 import com.bandomatteo.Prototipo1.domain.entities.BookEntity;
 import com.bandomatteo.Prototipo1.mappers.Mapper;
 import org.modelmapper.ModelMapper;

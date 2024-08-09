@@ -1,6 +1,5 @@
-package com.bandomatteo.Prototipo1.domain.dto;
+package com.bandomatteo.Prototipo1.domain.dtos;
 
-import com.bandomatteo.Prototipo1.domain.entities.AuthorEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
